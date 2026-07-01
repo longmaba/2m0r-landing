@@ -117,6 +117,7 @@ export default function App() {
         create: (target: gsap.DOMTarget, vars?: Record<string, unknown>) => SplitText;
       };
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const isMobile = window.matchMedia("(max-width: 760px)").matches;
 
       gsap.defaults({ ease: "power3.out", duration: 0.8 });
       gsap.set(root, { "--chaos": 0.5, "--tilt": "0deg", "--heat": 0.2 });
@@ -166,12 +167,12 @@ export default function App() {
       const intro = gsap.timeline({ defaults: { ease: "expo.out" } });
       intro
         .from(heroSplit.chars, {
-          yPercent: () => gsap.utils.random(-180, 180),
-          xPercent: () => gsap.utils.random(-120, 120),
-          rotation: () => gsap.utils.random(-48, 48),
+          yPercent: () => gsap.utils.random(isMobile ? -42 : -180, isMobile ? 42 : 180),
+          xPercent: () => gsap.utils.random(isMobile ? -32 : -120, isMobile ? 32 : 120),
+          rotation: () => gsap.utils.random(isMobile ? -18 : -48, isMobile ? 18 : 48),
           scale: 0.2,
           autoAlpha: 0,
-          duration: 1.5,
+          duration: isMobile ? 1.05 : 1.5,
           stagger: { each: 0.045, from: "random" },
         })
         .from(
@@ -196,9 +197,9 @@ export default function App() {
       });
 
       gsap.to(q(".sticker-float"), {
-        y: "random(-30, 30)",
-        x: "random(-24, 24)",
-        rotation: "random(-16, 16)",
+        y: isMobile ? "random(-14, 14)" : "random(-30, 30)",
+        x: isMobile ? "random(-10, 10)" : "random(-24, 24)",
+        rotation: isMobile ? "random(-8, 8)" : "random(-16, 16)",
         scale: "random(0.92, 1.08)",
         duration: "random(2.2, 4.2)",
         repeat: -1,
@@ -207,8 +208,8 @@ export default function App() {
       });
 
       gsap.to(q(".drift-token"), {
-        y: "random(-18, 18)",
-        rotation: "random(-7, 7)",
+        y: isMobile ? "random(-8, 8)" : "random(-18, 18)",
+        rotation: isMobile ? "random(-4, 4)" : "random(-7, 7)",
         duration: "random(1.4, 2.8)",
         repeat: -1,
         yoyo: true,
@@ -260,7 +261,7 @@ export default function App() {
         scrollTrigger: {
           trigger: q(".machine-stage")[0],
           start: "top top",
-          end: "+=3600",
+          end: isMobile ? "+=2600" : "+=3600",
           scrub: 1,
           pin: true,
           anticipatePin: 1,
@@ -272,36 +273,40 @@ export default function App() {
       machineTl
         .fromTo(
           q(".machine-core"),
-          { yPercent: 50, scale: 0.45, rotation: -18, autoAlpha: 0 },
-          { yPercent: 0, scale: 1, rotation: 0, autoAlpha: 1, duration: 1.1 },
+          { yPercent: isMobile ? 18 : 50, scale: 0.45, rotation: -18, autoAlpha: 0 },
+          { yPercent: 0, scale: isMobile ? 0.84 : 1, rotation: 0, autoAlpha: 1, duration: 1.1 },
         )
         .from(
           q(".machine-ring"),
           { scale: 0.2, rotation: -180, autoAlpha: 0, stagger: 0.08, duration: 0.8 },
           "<0.15",
         )
-        .to(q(".hero-ghost"), { scale: 0.38, yPercent: -52, autoAlpha: 0.18, duration: 0.7 }, "<")
+        .to(q(".hero-ghost"), { scale: isMobile ? 0.7 : 0.38, yPercent: isMobile ? -24 : -52, autoAlpha: 0.18, duration: 0.7 }, "<")
         .from(q(".orbit-name"), { autoAlpha: 0, scale: 0.3, stagger: 0.1, duration: 0.5 }, "-=0.4")
-        .to(q(".orbit-name.is-hoang"), { x: "4vw", y: "3vh", rotation: -7, duration: 0.75 })
-        .to(q(".orbit-name.is-long"), { x: "-5vw", y: "2vh", rotation: 7, duration: 0.75 }, "<")
+        .to(q(".orbit-name.is-hoang"), { x: isMobile ? "0vw" : "4vw", y: isMobile ? "1vh" : "3vh", rotation: -7, duration: 0.75 })
+        .to(q(".orbit-name.is-long"), { x: isMobile ? "0vw" : "-5vw", y: isMobile ? "1vh" : "2vh", rotation: 7, duration: 0.75 }, "<")
         .from(q(".machine-copy .line"), { yPercent: 110, autoAlpha: 0, stagger: 0.08, duration: 0.75 }, "-=0.45")
-        .to(q(".machine-core"), { scale: 0.82, xPercent: -22, rotation: -3, duration: 0.9 })
+        .to(q(".machine-core"), { scale: isMobile ? 0.72 : 0.82, xPercent: isMobile ? 14 : -22, rotation: -3, duration: 0.9 })
         .fromTo(
           q(".service-chip"),
           { x: 160, autoAlpha: 0 },
           { x: 0, autoAlpha: 1, stagger: 0.08, duration: 0.7 },
           "<0.1",
         )
-        .to(q(".service-chip"), { x: (i) => (i % 2 === 0 ? -40 : 28), rotation: (i) => (i % 2 === 0 ? -4 : 4), stagger: 0.05 })
-        .to(q(".machine-core"), { xPercent: 0, scale: 1.08, rotation: 3, duration: 0.8 })
+        .to(q(".service-chip"), { x: (i) => (isMobile ? 0 : i % 2 === 0 ? -40 : 28), rotation: (i) => (i % 2 === 0 ? -4 : 4), stagger: 0.05 })
+        .to(q(".machine-core"), { xPercent: isMobile ? 18 : 0, scale: isMobile ? 0.78 : 1.08, rotation: 3, duration: 0.8 })
         .fromTo(q(".final-command"), { y: 80, autoAlpha: 0, scale: 0.9 }, { y: 0, autoAlpha: 1, scale: 1, duration: 0.7 }, "-=0.35")
         .to(
           q(
-            ".machine-copy, .service-stream, .orbit-name, .machine-core, .hero-ghost, .sticker-float, .ring-stack, .scramble-panel, .final-command",
+            ".machine-copy, .service-stream, .orbit-name, .machine-core, .hero-ghost, .sticker-float, .ring-stack, .scramble-panel",
           ),
-          { y: -42, autoAlpha: 0, scale: 0.96, duration: 0.8, stagger: 0.015 },
+          { y: isMobile ? -18 : -42, autoAlpha: isMobile ? 0.18 : 0, scale: 0.96, duration: 0.8, stagger: 0.015 },
           "+=0.35",
-        );
+        )
+        .to(q(".final-command"), { y: isMobile ? -18 : -42, autoAlpha: 0, scale: 0.96, duration: 0.35 }, "<");
+
+      const refreshOnLoad = () => ScrollTrigger.refresh();
+      window.addEventListener("load", refreshOnLoad, { once: true });
 
       ScrollTrigger.batch(q(".reveal"), {
         start: "top 82%",
@@ -345,6 +350,7 @@ export default function App() {
         draggables.forEach((draggable) => draggable.kill());
         observer.kill();
         scramble.kill();
+        window.removeEventListener("load", refreshOnLoad);
         bioCards.forEach((card) => card.classList.remove("is-expanded"));
         flipHandlers.forEach((remove) => remove());
       };
